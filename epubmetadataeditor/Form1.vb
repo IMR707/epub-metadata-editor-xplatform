@@ -3495,37 +3495,6 @@ errortext:
         Dim startpos, namespacelen, endpos, extracheck, temppos As Integer
 
         Try
-            'Repair files previously corrupted by this tool:
-            '  - duplicate xmlns="http://www.idpf.org/2007/opf" on <package>
-            '  - redundant xmlns:opf="http://www.idpf.org/2007/opf" on <metadata>
-            '    (which duplicates the default xmlns= already declared on <package>)
-            Dim opfNS As String = "xmlns=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34)
-            Dim opfPrefixNS As String = " xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34)
-            Dim pkgpos As Integer = InStr(metadatafile, "<package")
-            Dim pkgendpos As Integer = InStr(pkgpos, metadatafile, ">")
-            If pkgpos > 0 And pkgendpos > 0 Then
-                Dim pkgtag As String = Mid(metadatafile, pkgpos, pkgendpos - pkgpos + 1)
-                ' Remove duplicate xmlns= on <package> — keep exactly one
-                Dim nsCount As Integer = (Len(pkgtag) - Len(pkgtag.Replace(opfNS, ""))) \ Len(opfNS)
-                If nsCount > 1 Then
-                    Dim fixedpkg As String = pkgtag.Replace(opfNS, "")
-                    Do While fixedpkg.Contains("  ") : fixedpkg = fixedpkg.Replace("  ", " ") : Loop
-                    ' Re-insert xmlns= once, right after "<package " (VB Replace has no count arg)
-                    Dim pkgWordEnd As Integer = InStr(fixedpkg, "<package ") + Len("<package ") - 1
-                    fixedpkg = Mid(fixedpkg, 1, pkgWordEnd) + opfNS + " " + Mid(fixedpkg, pkgWordEnd + 1)
-                    metadatafile = Mid(metadatafile, 1, pkgpos - 1) + fixedpkg + Mid(metadatafile, pkgendpos + 1)
-                End If
-                ' Remove xmlns:opf= from <metadata> when <package> default xmlns= covers it
-                If InStr(metadatafile, opfNS) > 0 Then
-                    Dim metapos As Integer = InStr(metadatafile, "<metadata")
-                    Dim metaendpos As Integer = InStr(metapos, metadatafile, ">")
-                    Dim metatag As String = Mid(metadatafile, metapos, metaendpos - metapos + 1)
-                    If InStr(metatag, opfPrefixNS) > 0 Then
-                        metadatafile = Mid(metadatafile, 1, metapos - 1) + metatag.Replace(opfPrefixNS, "") + Mid(metadatafile, metaendpos + 1)
-                    End If
-                End If
-            End If
-
             'Check for xml tag
             If InStr(metadatafile, "<?xml") Then
                 startpos = InStr(metadatafile, "<?xml")
@@ -3585,14 +3554,7 @@ errortext:
             'Search for xmlns:opf="http://www.idpf.org/2007/opf"
             'Previous versions of EPubMetadataEditor incorrectly added :opf to package xmlns so need to search for this and remove it then add :opf to metadata xmlns if missing
             If (InStr(metadatafile, "<package xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34))) Then
-                ' If the default xmlns="http://www.idpf.org/2007/opf" is already on <package>,
-                ' just strip the redundant xmlns:opf= prefix — replacing it would create a
-                ' duplicate xmlns= declaration that epubcheck flags as an error.
-                If (InStr(metadatafile, "xmlns=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34))) Then
-                    metadatafile = metadatafile.Replace(" xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34), "")
-                Else
-                    metadatafile = metadatafile.Replace("<package xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34), "<package xmlns=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34))
-                End If
+                metadatafile = metadatafile.Replace("<package xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34), "<package xmlns=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34))
             End If
             startpos = InStr(metadatafile, "<metadata ")
             temppos = InStr(startpos, metadatafile, "xmlns=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34))
@@ -3603,21 +3565,15 @@ errortext:
             temppos = InStr(metadatafile, "<dc:")
             If ((startpos = 0) Or (startpos > temppos)) Then
                 metadatafile = metadatafile.Replace("xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34), "")
-                ' Only inject xmlns:opf onto <metadata> if <package> does NOT already
-                ' declare xmlns="http://www.idpf.org/2007/opf" as its default namespace.
-                ' If it does, adding xmlns:opf= to <metadata> would be a duplicate
-                ' declaration of the same URI that epubcheck flags as an error.
-                Dim packageHasDefaultOpfNS As Boolean = (InStr(metadatafile, "xmlns=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34)) > 0)
-                If Not packageHasDefaultOpfNS Then
-                    'Add it to <metadata > tag
-                    startpos = InStr(metadatafile, "<metadata")
-                    startpos = InStr(startpos, metadatafile, ">") - 1
-                    extracheck = InStr(metadatafile, "xmlns:dc=" + Chr(34) + "http://purl.org/dc/elements/1.1/" + Chr(34))
-                    If extracheck = 0 Then
-                        metadatafile = Mid(metadatafile, 1, startpos) + " xmlns:dc=" + Chr(34) + "http://purl.org/dc/elements/1.1/" + Chr(34) + " xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34) + Mid(metadatafile, startpos + 1)
-                    Else
-                        metadatafile = Mid(metadatafile, 1, startpos) + " xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34) + Mid(metadatafile, startpos + 1)
-                    End If
+
+                'Add it to <metadata > tag
+                startpos = InStr(metadatafile, "<metadata")
+                startpos = InStr(startpos, metadatafile, ">") - 1
+                extracheck = InStr(metadatafile, "xmlns:dc=" + Chr(34) + "http://purl.org/dc/elements/1.1/" + Chr(34))
+                If extracheck = 0 Then
+                    metadatafile = Mid(metadatafile, 1, startpos) + " xmlns:dc=" + Chr(34) + "http://purl.org/dc/elements/1.1/" + Chr(34) + " xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34) + Mid(metadatafile, startpos + 1)
+                Else
+                    metadatafile = Mid(metadatafile, 1, startpos) + " xmlns:opf=" + Chr(34) + "http://www.idpf.org/2007/opf" + Chr(34) + Mid(metadatafile, startpos + 1)
                 End If
             End If
 
@@ -5593,6 +5549,9 @@ exitwithoutsaving:
             ProgressBar1.Maximum = filenum - 1
             ProgressBar1.Visible = True
 
+            Dim notoall = False
+            Dim yestoall = False
+
             For x = 1 To filenum
                 ChDir(tempdirectory)
                 ProgressBar1.Value = x - 1
@@ -5892,15 +5851,24 @@ errortext:
                         ListBox1.Items(x - 1) = newFileName
                     Else
                         If (File.Exists(newFileName)) Then
-                            DialogResult = MsgBox("The following file already exists:" + Chr(10) + newFileName + Chr(10) + "Overwrite?", MsgBoxStyle.YesNo, "EPUB Metadata Editor")
-                            If DialogResult = Windows.Forms.DialogResult.No Then
-                                GoTo exitwithoutsaving
+                            If (notoall) Then GoTo exitwithoutsaving
+                            If (Not yestoall) Then
+                                Dialog4.Label1.Text = "The following file already exists:" + Chr(10) + newFileName + Chr(10) + "Overwrite?"
+                                DialogResult = Dialog4.ShowDialog
+                                If (Dialog4.ButtonClicked = "No") Then
+                                    GoTo exitwithoutsaving
+                                ElseIf (Dialog4.ButtonClicked = "NoToAll") Then
+                                    notoall = True
+                                    GoTo exitwithoutsaving
+                                ElseIf (Dialog4.ButtonClicked = "YesToAll") Then
+                                    yestoall = True
+                                End If
                             End If
                         End If
                         System.IO.File.Copy(ListBox1.Items(x - 1), newFileName, True)
                         System.IO.File.Delete(ListBox1.Items(x - 1))
                         ListBox1.Items(x - 1) = newFileName
-                    End If
+                        End If
                 End If
 exitwithoutsaving:
                 ClearInterface()
