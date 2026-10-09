@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:EpubMetadataEditor.Desktop.ViewModels"
+        x:Class="EpubMetadataEditor.Desktop.Views.MainWindow"
+        x:DataType="vm:BookEditorViewModel"
+        Title="EPUB Metadata Editor XPlatform" Width="1020" Height="720"
+        MinWidth="760" MinHeight="620" Background="#F5F7FA">
+  <Grid RowDefinitions="Auto,*,Auto" Margin="28" RowSpacing="20">
+    <Grid ColumnDefinitions="*,Auto">
+      <StackPanel Spacing="5">
+        <TextBlock Text="EPUB Metadata Editor" FontSize="26" FontWeight="SemiBold" Foreground="#163A45" />
+        <TextBlock Text="XPlatform · Development preview" Foreground="#516873" />
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+        <Button Content="Open EPUB…" Click="Open_Click" IsEnabled="{Binding !IsBusy}" />
+        <Button Content="Save a copy…" Click="Save_Click" IsEnabled="{Binding CanSave}" />
+      </StackPanel>
+    </Grid>
+    <Border Grid.Row="1" Background="White" BorderBrush="#DFE6EB" BorderThickness="1" CornerRadius="12" Padding="24">
+      <Grid ColumnDefinitions="180,*" ColumnSpacing="28">
+        <StackPanel Spacing="14">
+          <Border Height="240" Background="#EDF3F4" CornerRadius="6" Padding="12">
+            <Image x:Name="CoverImage" Stretch="Uniform" />
+          </Border>
+          <TextBlock x:Name="CoverStatus" Text="Cover preview" Foreground="#516873" TextWrapping="Wrap" />
+          <Button Content="Component checks…" Click="Components_Click" HorizontalAlignment="Stretch" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Spacing="14">
+          <TextBlock Text="{Binding FilePath}" TextWrapping="Wrap" Foreground="#516873" FontSize="12" />
+          <TextBlock Text="Title" FontWeight="SemiBold" FontSize="16" />
+          <TextBox x:Name="TitleInput" Text="{Binding BookTitle}" IsEnabled="{Binding HasBook}" PlaceholderText="Book title" />
+          <TextBlock Text="{Binding MetadataSummary}" TextWrapping="Wrap" />
+          <Separator Margin="0,4" />
+          <TextBlock Text="Filename preview" FontWeight="SemiBold" FontSize="16" />
+          <TextBox Text="{Binding FilenameTemplate}" IsEnabled="{Binding HasBook}" />
+          <TextBlock Text="Fields: %Creator%, %Creator2%, %Title%, %Language%. Uppercase fields produce uppercase text; %% produces %." TextWrapping="Wrap" FontSize="12" Foreground="#516873" />
+          <TextBlock Text="{Binding FilenamePreview}" TextWrapping="Wrap" FontWeight="Medium" />
+          <TextBlock Text="This preview edits the title and saves a new copy. Other metadata fields and renaming are coming in later milestones." TextWrapping="Wrap" FontSize="12" Foreground="#516873" Margin="0,12,0,0" />
+        </StackPanel>
+      </Grid>
+    </Border>
+    <StackPanel Grid.Row="2" Spacing="8">
+      <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" Height="3" />
+      <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Foreground="#163A45" />
+    </StackPanel>
+  </Grid>
+</Window>

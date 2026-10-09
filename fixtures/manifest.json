@@ -1,0 +1,28 @@
+[
+  {
+    "file": "epub2-nested.epub",
+    "sha256": "e268aa4c52f623a28aa5c0d7cef418080df9222afbf6c28088c7b2da6e398a5f",
+    "epubVersion": "2.0",
+    "title": "The Sample Book",
+    "creators": [
+      "Zoë Chen",
+      "陈 Example"
+    ],
+    "packagePath": "Books/EPUB2/package.opf",
+    "license": "CC0-1.0",
+    "purpose": "Nested package path, repeated creators/titles, Unicode, PNG cover and encoded resource URLs"
+  },
+  {
+    "file": "epub3-unicode.epub",
+    "sha256": "905cf2d9ceefd19a92a96e3d7bbe6487529812482d946b5cb0091d441a9f450e",
+    "epubVersion": "3.0",
+    "title": "The Sample Book",
+    "creators": [
+      "Zoë Chen",
+      "陈 Example"
+    ],
+    "packagePath": "Books/EPUB3/package.opf",
+    "license": "CC0-1.0",
+    "purpose": "Nested package path, repeated creators/titles, Unicode, PNG cover and encoded resource URLs"
+  }
+]

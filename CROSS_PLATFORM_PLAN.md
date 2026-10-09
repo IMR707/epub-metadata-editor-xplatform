@@ -55,7 +55,7 @@ These are the audited feature groups. Milestone 0 expands each group into indivi
 | Desktop integration | Remembered settings/window placement, configurable external viewer, show extracted contents in the file manager, open-book arguments/file association, About/credits and links, and update notification pointing to this fork's releases | `ClassIni.vb`, application startup, `Dialog3.vb`, installer |
 | Companion console | Inventory and reproduce metadata-field and cover extraction commands through the shared Core | Bundled `EPubMetadataEditorConsole.exe`; installer uses `-extract cover` |
 
-The repository contains the console executable but no corresponding source project. Static inspection shows usage of the form `EPubMetadataEditorConsole.exe "filename" -extract fieldname`. Its complete supported fields, output formats, and exit behavior need verification in Milestone 0. Include this in parity planning rather than assuming the executable is portable or that the known cover command is its only feature.
+The repository contains the console executable but no corresponding source project. Static inspection shows usage of the form `EPubMetadataEditorConsole.exe "filename" -extract fieldname`. Static inspection has now recorded its advertised fields in docs/MILESTONE_0.md; their runtime behavior, output formats, and exit codes still need verification in Milestone 0. Include this in parity planning rather than assuming the executable is portable or that the known cover command is its only feature.
 
 Parity means users can complete the same workflows with equivalent results. Adapt labels such as “Windows Explorer,” native dialogs, menus, and Ctrl/Command shortcuts to each OS. Preserve behavior deliberately; do not reproduce data-loss bugs or silently drop a feature because its Windows control has no direct replacement.
 
@@ -98,11 +98,11 @@ Publish self-contained builds so users do not need a separately installed .NET r
 
 Keep upstream attribution and the existing GPL-3.0-or-later notice, and include dependency notices in release artifacts. Add appropriate ignore/build configuration for the new solution; do not remove tracked legacy binaries or signing artifacts merely as incidental cleanup while establishing the baseline.
 
-## Immediate next implementation step
+## Milestone 0 progress
 
-Start Milestone 0: add the new solution, a portable C# Core project, a C# Avalonia shell, the detailed parity checklist and fixture manifest, and Windows/Linux/macOS build jobs. Prototype one real metadata operation and one filename-template operation ported from the original behavior, with regression examples. The desktop prototype should open a file dialog and display an image and local HTML preview. These checks validate both the processing approach and the UI dependencies before the full implementation.
+Milestone 0 is in progress. The separate C# solution, desktop shell, development CLI, regression tests, generated fixtures, parity checklist, and three-OS CI workflow have been added. Title-copy saving and a subset of filename-template expansion are implemented. The native component probe loads a text editor, raster image, and local HTML with relative resources. See [docs/MILESTONE_0.md](docs/MILESTONE_0.md) for verification evidence and remaining completion criteria; [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) contains build and run commands.
 
-This plan is based on source inspection and current framework documentation. No application build or legacy runtime comparison has been performed. The inspected environment has no `dotnet`, Mono, or MSBuild on PATH. Windows/macOS runtime test access and any distribution-signing credentials are prerequisites to completing their release checks.
+The local .NET 10.0.112 SDK has been installed and verified. Linux builds and prototype tests have run; legacy runtime comparisons and Windows/macOS verification are still pending. The maintainer has Windows access; macOS desktop testing still needs an arrangement. Distribution-signing credentials are prerequisites to completing the later release checks.
 
 ## References
 

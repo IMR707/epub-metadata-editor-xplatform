@@ -1,0 +1,9 @@
+# New .NET projects (tracked legacy artifacts remain in Git)
+**/bin/
+**/obj/
+.vs/
+.idea/
+*.user
+*.suo
+TestResults/
+artifacts/

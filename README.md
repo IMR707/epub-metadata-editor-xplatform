@@ -6,17 +6,27 @@ This will be a new implementation with its own architecture and release schedule
 
 ## Current status
 
-**Planning stage — the cross-platform application has not been implemented yet.**
+**Milestone 0 in progress — an initial C#/Avalonia development prototype is available.**
 
-The repository currently contains the original **VB.NET / Windows Forms application, version 2.0.4**, targeting .NET Framework 3.5. The executables included with that source are legacy Windows builds; they are not releases of the planned cross-platform application.
+The repository preserves the original **VB.NET / Windows Forms application, version 2.0.4**, targeting .NET Framework 3.5, alongside the new C# solution. Executables in the legacy source tree are Windows builds of the original application.
 
-Windows, Linux, and macOS are the intended targets for the new application. Cross-platform builds and installation instructions will be added as implementation and testing progress.
+The prototype opens EPUB 2/3 books, displays metadata and raster covers, edits the first title, saves a new copy, and previews a small subset of filename-template fields. A component probe exercises a text editor and embedded HTML rendering. This is not a full-parity release. Windows and macOS verification remains pending.
 
 For the existing Windows application, see the [original project's releases](https://github.com/benchen71/epub-metadata-editor/releases) and [documentation](https://github.com/benchen71/epub-metadata-editor/wiki).
 
+## Run the development prototype
+
+Install the .NET 10 SDK, then run from the repository root:
+
+```sh
+dotnet run --project src/EpubMetadataEditor.Desktop
+```
+
+Use one of the generated books in `fixtures/` to try the title-edit/save-copy workflow. See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for native dependencies, build/test commands, the CLI, and component checks. Track actual verification in [MILESTONE_0.md](docs/MILESTONE_0.md) and the [feature parity checklist](docs/FEATURE_PARITY.md).
+
 ## Planned functionality
 
-The first cross-platform release is intended to reach **full feature parity** with the original application. The following are development goals, not features already implemented in the new application:
+The first cross-platform release is intended to reach **full feature parity** with the original application. The list below describes the complete release target; only the prototype subset described above is implemented:
 
 - **EPUB 2 and EPUB 3 metadata editing:** titles, creators and roles, sort fields, publisher, description, dates, identifiers, language, subjects, and series information.
 - **Cover tools:** preview, import, replace, select existing images, clipboard and drag/drop support, export, thumbnails, and cover fixes.
@@ -55,7 +65,10 @@ XPlatform uses its own release numbers, independent of the original application'
 - [`EPubMetadataEditor.sln`](EPubMetadataEditor.sln) — original Windows solution.
 - [`CROSS_PLATFORM_PLAN.md`](CROSS_PLATFORM_PLAN.md) — cross-platform implementation plan.
 
-The new C# solution and projects will be added during implementation.
+- [`EpubMetadataEditor.XPlatform.slnx`](EpubMetadataEditor.XPlatform.slnx) — new .NET 10 solution.
+- [`src/`](src/) — shared Core, Avalonia Desktop, and development CLI.
+- [`tests/`](tests/) and [`fixtures/`](fixtures/) — regression tests and original EPUB samples.
+- [`docs/`](docs/) — developer guide, milestone evidence, and feature checklist.
 
 ## Credits and license
 

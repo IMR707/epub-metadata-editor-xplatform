@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/EpubMetadataEditor.Core/EpubMetadataEditor.Core.csproj" />
+    <Project Path="src/EpubMetadataEditor.Desktop/EpubMetadataEditor.Desktop.csproj" />
+    <Project Path="src/EpubMetadataEditor.Cli/EpubMetadataEditor.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EpubMetadataEditor.Tests/EpubMetadataEditor.Tests.csproj" />
+  </Folder>
+</Solution>
